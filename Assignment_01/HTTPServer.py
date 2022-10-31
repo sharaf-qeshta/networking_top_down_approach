@@ -1,0 +1,42 @@
+from socket import *
+
+'''
+Assignment 1: Web Server
+In this assignment, you will develop a simple Web server in Python that is capable of 
+processing only one request. Specifically, your Web server will (i) create a connection 
+socket when contacted by a client (browser); (ii) receive the HTTP request from this 
+connection; (iii) parse the request to determine the specific file being requested; (iv) get 
+the requested file from the server’s file system; (v) create an HTTP response message 
+consisting of the requested file preceded by header lines; and (vi) send the response 
+over the TCP connection to the requesting browser. If a browser requests a file that is 
+not present in your server, your server should return a “404 Not Found” error message.
+In the Companion Website, we provide the skeleton code for your server. Your 
+job is to complete the code, run your server, and then test your server by sending 
+requests from browsers running on different hosts. If you run your server on a host 
+that already has a Web server running on it, then you should use a different port than 
+port 80 for your Web server.
+
+
+@author Sharaf Qeshta
+'''
+
+serverPort = 8000
+serverSocket = socket(AF_INET, SOCK_STREAM)
+serverSocket.bind(("localhost", serverPort))
+serverSocket.listen(1)
+print("The server is ready to receive")
+
+while True:
+    connectionSocket, address = serverSocket.accept()
+    request = connectionSocket.recv(1024).decode()
+    requestData = request.split()
+    fileName = requestData[1].replace("/", "")
+    protocol = requestData[2]  # in case of HTTP/1.1 and HTTP/2
+    try:
+        file = open(fileName)
+        data = file.read()
+        connectionSocket.send(f"\n{protocol} 200 OK\n\n".encode())
+        connectionSocket.send(data.encode())
+    except IOError:
+        connectionSocket.send(f"\n{protocol} 404 Not Found\n\n".encode())
+    connectionSocket.close()
