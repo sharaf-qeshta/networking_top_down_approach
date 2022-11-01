@@ -47,8 +47,10 @@ print(response_4)
 if response_4.split()[0] != b'354':
     print("Error occurs")
 
-client_socket.send("Hello World\r\n".encode())
-client_socket.send("\n\r.\r\n".encode())
+client_socket.send("Hello World\n".encode())
+client_socket.send("Hello World1\n".encode())
+client_socket.send("Hello World2".encode())
+client_socket.send("\n\r.".encode())
 response_5 = client_socket.recv(1024)
 print(response_5)
 if response_5.split()[0] != b'250':

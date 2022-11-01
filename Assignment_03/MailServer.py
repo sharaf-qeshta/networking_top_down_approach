@@ -6,6 +6,9 @@ The server is ready to receive
 "From": SharafQeshta@example.edu
 "To": JohnSmith@example.org 
 "Subject": Hello World
+Hello World1
+Hello World2
+.
 '''
 serverPort = 25
 serverSocket = socket(AF_INET, SOCK_STREAM)
@@ -35,9 +38,9 @@ while True:
     connectionSocket.send("354 Enter mail, end with \".\" on a line by itself".encode())
 
     subject = connectionSocket.recv(1024).decode()
-    while subject.endswith("."):
+    while not subject.strip().endswith("."):
         subject = f"{subject}\n{connectionSocket.recv(1024).decode()}"
-    mail = mail.replace("`", subject)
+    mail = mail.replace("`", subject.strip())
 
     connectionSocket.send("250 Message accepted for delivery".encode())
     connectionSocket.recv(1024)  # QUIT
